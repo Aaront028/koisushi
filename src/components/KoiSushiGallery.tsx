@@ -532,8 +532,7 @@ export default function Component() {
 
       <footer className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 py-4 z-20">
         <div className="container mx-auto px-6 text-center text-sm text-white">
-          <p>&copy; {new Date().getFullYear()} Koi Sushi & Gallery. All rights reserved.</p>
-          <p>Website created by v0</p>
+          <p>&copy; {new Date().getFullYear()} Aaron Tan. All rights reserved.</p>
         </div>
       </footer>
 
