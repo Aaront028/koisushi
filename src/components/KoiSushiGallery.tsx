@@ -140,16 +140,74 @@ const cateringPlatters = [
   }
 ]
 
-const CheckoutModal = ({ isOpen, onClose, platterName, price }: { isOpen: boolean; onClose: () => void; platterName: string | null; price: string | null }) => {
+type CartItem = {
+  name: string;
+  price: string;
+  quantity: number;
+}
+
+const CartModal = ({ isOpen, onClose, cart, onCheckout, onRemove }: { isOpen: boolean; onClose: () => void; cart: CartItem[]; onCheckout: () => void; onRemove: (name: string) => void }) => {
   if (!isOpen) return null;
+
+  const total = cart.reduce((sum, item) => sum + parseFloat(item.price.replace('$', '')) * item.quantity, 0);
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+      <div className="bg-white p-8 rounded-lg max-w-md w-full">
+        <h3 className="text-2xl font-bold mb-4 text-gray-800">Your Cart</h3>
+        {cart.map((item, index) => (
+          <div key={index} className="flex justify-between items-center mb-2">
+            <span>{item.name} x {item.quantity}</span>
+            <div>
+              <span className="mr-4">${(parseFloat(item.price.replace('$', '')) * item.quantity).toFixed(2)}</span>
+              <Button onClick={() => onRemove(item.name)} className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 text-sm">
+                Remove
+              </Button>
+            </div>
+          </div>
+        ))}
+        <div className="border-t border-gray-200 mt-4 pt-4">
+          <div className="flex justify-between items-center font-bold">
+            <span>Total:</span>
+            <span>${total.toFixed(2)}</span>
+          </div>
+        </div>
+        <div className="flex justify-end space-x-2 mt-6">
+          <Button onClick={onClose} className="bg-gray-500 hover:bg-gray-600 text-white">
+            Close
+          </Button>
+          <Button onClick={onCheckout} className="bg-red-700 hover:bg-red-800 text-white">
+            Proceed to Checkout
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const CheckoutModal = ({ isOpen, onClose, cart }: { isOpen: boolean; onClose: () => void; cart: CartItem[] }) => {
+  if (!isOpen) return null;
+
+  const total = cart.reduce((sum, item) => sum + parseFloat(item.price.replace('$', '')) * item.quantity, 0);
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
       <div className="bg-white p-8 rounded-lg max-w-md w-full">
         <h3 className="text-2xl font-bold mb-4 text-gray-800">Checkout</h3>
-        <p className="text-gray-600 mb-4">
-          You are ordering the {platterName} platter for {price}.
-        </p>
+        <div className="mb-4">
+          {cart.map((item, index) => (
+            <div key={index} className="flex justify-between items-center mb-2">
+              <span>{item.name} x {item.quantity}</span>
+              <span>${(parseFloat(item.price.replace('$', '')) * item.quantity).toFixed(2)}</span>
+            </div>
+          ))}
+          <div className="border-t border-gray-200 mt-4 pt-4">
+            <div className="flex justify-between items-center font-bold">
+              <span>Total:</span>
+              <span>${total.toFixed(2)}</span>
+            </div>
+          </div>
+        </div>
         <form className="space-y-4">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
@@ -186,9 +244,39 @@ const CheckoutModal = ({ isOpen, onClose, platterName, price }: { isOpen: boolea
 export default function Component() {
   const [currentPage, setCurrentPage] = useState(0)
   const [activeMenuSection, setActiveMenuSection] = useState(menuSections[0].title)
-  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
-  const [selectedPlatter, setSelectedPlatter] = useState<string | null>(null);
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+
+  const addToCart = (platter: { name: string; price: string }) => {
+    setCart(prevCart => {
+      const existingItem = prevCart.find(item => item.name === platter.name);
+      if (existingItem) {
+        return prevCart.map(item =>
+          item.name === platter.name
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+      } else {
+        return [...prevCart, { ...platter, quantity: 1 }];
+      }
+    });
+  };
+
+  const removeFromCart = (name: string) => {
+    setCart(prevCart => {
+      const existingItem = prevCart.find(item => item.name === name);
+      if (existingItem && existingItem.quantity > 1) {
+        return prevCart.map(item =>
+          item.name === name
+            ? { ...item, quantity: item.quantity - 1 }
+            : item
+        );
+      } else {
+        return prevCart.filter(item => item.name !== name);
+      }
+    });
+  };
 
   const paginate = (newDirection: number) => {
     setCurrentPage((prevPage) => {
@@ -340,12 +428,9 @@ export default function Component() {
                                 <span className="text-3xl font-bold text-white">{platter.price}</span>
                                 <Button
                                   className="bg-red-700 hover:bg-red-800 text-white font-semibold py-2 px-4 rounded transition-colors duration-300"
-                                  onClick={() => {
-                                    setSelectedPlatter(platter.name);
-                                    setIsCheckoutOpen(true);
-                                  }}
+                                  onClick={() => addToCart(platter)}
                                 >
-                                  Order Now
+                                  Add to Cart
                                 </Button>
                               </div>
                             </div>
@@ -354,6 +439,14 @@ export default function Component() {
                             </div>
                           </div>
                         ))}
+                      </div>
+                      <div className="text-center mt-8">
+                        <Button
+                          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition-colors duration-300"
+                          onClick={() => setIsCartOpen(true)}
+                        >
+                          View Cart ({cart.reduce((sum, item) => sum + item.quantity, 0)})
+                        </Button>
                       </div>
                     </div>
                   )}
@@ -419,11 +512,21 @@ export default function Component() {
         </div>
       </footer>
 
+      <CartModal
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        cart={cart}
+        onCheckout={() => {
+          setIsCartOpen(false);
+          setIsCheckoutOpen(true);
+        }}
+        onRemove={removeFromCart}
+      />
+
       <CheckoutModal
         isOpen={isCheckoutOpen}
         onClose={() => setIsCheckoutOpen(false)}
-        platterName={selectedPlatter}
-        price={cateringPlatters.find(p => p.name === selectedPlatter)?.price || null}
+        cart={cart}
       />
     </div>
   )
