@@ -179,16 +179,16 @@ export default function Component() {
   }
 
   return (
-    <div className="h-screen w-screen overflow-hidden relative bg-gray-100">
+    <div className="min-h-screen w-screen overflow-hidden relative bg-gray-100">
       <div
         className="absolute inset-0 bg-cover bg-center z-0"
         style={{
           backgroundImage: "url('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/florian-metzner-12IsagncQ7o-unsplash-6NsVxPm5T40al8AOv3tPE6TDRJw4lz.jpg')",
-          filter: "brightness(0.5)"
+          filter: "brightness(0.4)"
         }}
       />
 
-      <main className="relative z-10 h-full flex items-center justify-center p-4 sm:p-6">
+      <main className="relative z-10 min-h-screen flex items-center justify-center p-4 sm:p-6">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentPage}
@@ -197,32 +197,33 @@ export default function Component() {
             animate="in"
             exit="out"
             transition={pageTransition}
-            className="w-full max-w-4xl"
+            className="w-full max-w-5xl"
           >
             <div className="relative">
               {currentPage === 0 && (
-                <div className="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2" style={{ top: "-25%" }}>
-                  <img
-                    src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/koilogo-UGrGbQBXQ02k3Fz51DtZXsTT8rIoaN.png"
-                    alt="Koi Sushi & Gallery Logo"
-                    className="w-32 h-32 object-contain"
-                  />
-                </div>
+                <img
+                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/koilogo-UGrGbQBXQ02k3Fz51DtZXsTT8rIoaN.png"
+                  alt="Koi Sushi & Gallery Logo"
+                  className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 object-contain z-20"
+                />
               )}
-              <div className="bg-black bg-opacity-50 p-8 rounded-lg shadow-lg relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black opacity-50"></div>
+              <div className={`bg-black bg-opacity-60 p-8 ${currentPage === 0 ? 'pt-24' : 'pt-8'} rounded-2xl shadow-2xl overflow-hidden backdrop-blur-sm`}>
                 <div className="relative z-10 max-h-[calc(100vh-16rem)] overflow-y-auto scrollbar-hide">
                   {pages[currentPage] === 'home' && (
-                    <div className="text-center text-white pt-16">
-                      <h1 className="text-4xl sm:text-5xl font-bold mb-4 text-shadow-lg">Welcome to Koi Sushi & Gallery</h1>
-                      <p className="text-xl mb-8 text-shadow-md">Experience the art of sushi in a unique gallery setting</p>
+                    <div className="text-center text-white">
+                      <h1 className="text-4xl sm:text-5xl font-bold mb-6 font-playfair">
+                        Welcome to Koi Sushi & Gallery
+                      </h1>
+                      <p className="text-xl mb-10 font-playfair italic">
+                        Experience the art of sushi in a unique gallery setting
+                      </p>
                       <div className="flex flex-wrap justify-center gap-4">
                         {pages.map((page, index) => (
                           <Button
                             key={page}
                             onClick={() => setCurrentPage(index)}
                             variant="outline"
-                            className="mb-2 bg-white/10 text-white border-white/20 hover:bg-white/20 hover:text-white transition-all duration-300 shadow-lg"
+                            className="mb-2 bg-white/10 text-white border-white/20 hover:bg-white/20 hover:text-white transition-all duration-300 shadow-lg text-lg px-6 py-3 font-playfair"
                           >
                             {page.charAt(0).toUpperCase() + page.slice(1)}
                           </Button>
@@ -330,8 +331,10 @@ export default function Component() {
           initial="initial"
           animate="animate"
           onClick={() => paginate(-1)}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
         >
-          <ChevronLeft className="h-12 w-12 text-white cursor-pointer" />
+          <ChevronLeft className="h-14 w-14 text-white cursor-pointer bg-black/50 rounded-full p-2 hover:bg-black/70 transition-all duration-300" />
         </motion.div>
 
         <motion.div
@@ -340,8 +343,10 @@ export default function Component() {
           initial="initial"
           animate="animate"
           onClick={() => paginate(1)}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
         >
-          <ChevronRight className="h-12 w-12 text-white cursor-pointer" />
+          <ChevronRight className="h-14 w-14 text-white cursor-pointer bg-black/50 rounded-full p-2 hover:bg-black/70 transition-all duration-300" />
         </motion.div>
       </main>
 
