@@ -370,7 +370,7 @@ export default function Component() {
             <div className="relative">
               {currentPage === 0 && (
                 <img
-                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/koilogo-UGrGbQBXQ02k3Fz51DtZXsTT8rIoaN.png"
+                  src="/images/koilogo.png"
                   alt="Koi Sushi & Gallery Logo"
                   className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 object-contain z-20"
                 />
