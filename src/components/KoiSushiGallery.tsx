@@ -186,6 +186,93 @@ const CartModal = ({ isOpen, onClose, cart, onCheckout, onRemove, onClearAll }: 
   );
 };
 
+const CheckoutForm = ({ total, onClose }: { total: number; onClose: () => void }) => {
+  const [processing, setProcessing] = useState(false);
+  const [demoMessage, setDemoMessage] = useState<string | null>(null);
+  const [cardNumber, setCardNumber] = useState('');
+  const [expiry, setExpiry] = useState('');
+  const [cvc, setCvc] = useState('');
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setProcessing(true);
+    setDemoMessage(null);
+
+    // Simulate payment processing
+    setTimeout(() => {
+      setDemoMessage('This is a demo: No actual payment was processed. In a real application, the payment would be sent to a server for processing.');
+      setProcessing(false);
+    }, 2000); // Simulate a 2-second processing time
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div className="mb-4">
+        <label htmlFor="card-number" className="block text-sm font-medium text-gray-700">
+          Card Number
+        </label>
+        <input
+          type="text"
+          id="card-number"
+          placeholder="1234 1234 1234 1234"
+          className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+          value={cardNumber}
+          onChange={(e) => setCardNumber(e.target.value)}
+          maxLength={19}
+        />
+      </div>
+      <div className="flex mb-4 space-x-4">
+        <div className="flex-1">
+          <label htmlFor="expiry" className="block text-sm font-medium text-gray-700">
+            Expiry (MM/YY)
+          </label>
+          <input
+            type="text"
+            id="expiry"
+            placeholder="MM/YY"
+            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            value={expiry}
+            onChange={(e) => setExpiry(e.target.value)}
+            maxLength={5}
+          />
+        </div>
+        <div className="flex-1">
+          <label htmlFor="cvc" className="block text-sm font-medium text-gray-700">
+            CVC
+          </label>
+          <input
+            type="text"
+            id="cvc"
+            placeholder="123"
+            className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+            value={cvc}
+            onChange={(e) => setCvc(e.target.value)}
+            maxLength={3}
+          />
+        </div>
+      </div>
+      {demoMessage && (
+        <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mt-4" role="alert">
+          <p className="font-bold">Demo Payment</p>
+          <p>{demoMessage}</p>
+        </div>
+      )}
+      <div className="flex justify-end space-x-2 mt-4">
+        <Button onClick={onClose} className="bg-gray-500 hover:bg-gray-600 text-white">
+          Cancel
+        </Button>
+        <Button
+          type="submit"
+          disabled={processing}
+          className="bg-teal-600 hover:bg-teal-700 text-white disabled:opacity-50"
+        >
+          {processing ? 'Processing...' : `Pay $${total.toFixed(2)}`}
+        </Button>
+      </div>
+    </form>
+  );
+};
+
 const CheckoutModal = ({ isOpen, onClose, cart }: { isOpen: boolean; onClose: () => void; cart: CartItem[] }) => {
   if (!isOpen) return null;
 
@@ -212,31 +299,24 @@ const CheckoutModal = ({ isOpen, onClose, cart }: { isOpen: boolean; onClose: ()
         <form className="space-y-4">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
-            <input type="text" id="name" name="name" className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" />
+            <input type="text" id="name" name="name" className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" required />
           </div>
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-            <input type="email" id="email" name="email" className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" />
+            <input type="email" id="email" name="email" className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" required />
           </div>
           <div>
             <label htmlFor="address" className="block text-sm font-medium text-gray-700">Delivery Address</label>
-            <textarea id="address" name="address" rows={3} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"></textarea>
-          </div>
-          <p className="text-sm text-gray-500 italic">
-            We will send an email confirmation of your order to the provided email address.
-          </p>
-          <div className="flex justify-end space-x-2">
-            <Button onClick={onClose} className="bg-gray-500 hover:bg-gray-600 text-white">
-              Cancel
-            </Button>
-            <Button onClick={() => {
-              alert('Order placed successfully! Please check your email for confirmation. (This is a demo)');
-              onClose();
-            }} className="bg-teal-600 hover:bg-teal-700 text-white">
-              Place Order
-            </Button>
+            <textarea id="address" name="address" rows={3} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" required></textarea>
           </div>
         </form>
+        <div className="mt-6">
+          <h4 className="text-lg font-semibold mb-2">Payment Details</h4>
+          <CheckoutForm total={total} onClose={onClose} />
+        </div>
+        <p className="text-sm text-gray-500 italic mt-4">
+          We will send an email confirmation of your order to the provided email address.
+        </p>
       </div>
     </div>
   );
