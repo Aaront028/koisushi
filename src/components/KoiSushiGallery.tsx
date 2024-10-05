@@ -4,12 +4,6 @@ import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronLeft, ChevronRight, Phone, Mail, MapPin, Facebook } from 'lucide-react'
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
 
 const pages = ['home', 'about', 'menu', 'catering', 'contact']
 
