@@ -453,10 +453,10 @@ export default function Component() {
                           return (
                             <div key={index} className="bg-gray-900/80 rounded-lg overflow-hidden shadow-lg border border-gray-800 hover:border-gray-700 transition-all duration-300 flex flex-col">
                               <div className="p-6 flex-grow flex flex-col">
-                                <div className="flex justify-between items-center mb-4">
-                                  <h3 className="text-2xl font-semibold font-playfair text-white">{platter.name}</h3>
+                                <div className="mb-4">
+                                  <h3 className="text-2xl font-semibold font-playfair text-white mb-2">{platter.name}</h3>
                                   {quantity > 0 && (
-                                    <span className="bg-gray-600 text-gray-200 text-sm font-bold px-2 py-1 rounded-full">
+                                    <span className="bg-teal-600/20 text-teal-300 text-sm font-medium px-3 py-1 rounded-full inline-block">
                                       {quantity} in cart
                                     </span>
                                   )}
@@ -468,19 +468,19 @@ export default function Component() {
                                     </div>
                                   ))}
                                 </div>
-                                <div className="flex justify-between items-center mt-auto">
+                                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-auto space-y-4 sm:space-y-0">
                                   <span className="text-3xl font-bold text-white">{platter.price}</span>
-                                  <div className="space-x-2">
+                                  <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
                                     {quantity > 0 && (
                                       <Button
-                                        className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded transition-colors duration-300"
+                                        className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded transition-colors duration-300 w-full sm:w-auto"
                                         onClick={() => clearPlatter(platter.name)}
                                       >
                                         Clear Platter
                                       </Button>
                                     )}
                                     <Button
-                                      className="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-4 rounded transition-colors duration-300"
+                                      className="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-4 rounded transition-colors duration-300 w-full sm:w-auto"
                                       onClick={() => addToCart(platter)}
                                     >
                                       Add to Cart
