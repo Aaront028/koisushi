@@ -11,3 +11,32 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none; /* Chrome, Safari and Opera */
 }
+
+/* Custom styles for responsive layout */
+@media (max-height: 667px) {
+  .logo-position {
+    top: 10vh;
+  }
+
+  .content-padding {
+    padding-top: calc(10vh + 5rem);
+  }
+
+  .content-height {
+    max-height: calc(80vh - 8rem);
+  }
+}
+
+@media (min-height: 668px) {
+  .logo-position {
+    top: 0;
+  }
+
+  .content-padding {
+    padding-top: 6rem;
+  }
+
+  .content-height {
+    max-height: calc(100vh - 12rem);
+  }
+}

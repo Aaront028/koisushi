@@ -372,26 +372,26 @@ export default function Component() {
                 <img
                   src="/images/koilogo.png"
                   alt="Koi Sushi & Gallery Logo"
-                  className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 object-contain z-20"
+                  className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 object-contain z-20 logo-position"
                 />
               )}
-              <div className={`bg-black bg-opacity-60 p-8 ${currentPage === 0 ? 'pt-24' : 'pt-8'} rounded-2xl shadow-2xl overflow-hidden backdrop-blur-sm`}>
-                <div className="relative z-10 max-h-[calc(100vh-20rem)] overflow-y-auto scrollbar-hide">
+              <div className={`bg-black bg-opacity-60 p-8 ${currentPage === 0 ? 'content-padding' : 'pt-8'} rounded-2xl shadow-2xl overflow-hidden backdrop-blur-sm`}>
+                <div className="relative z-10 content-height overflow-y-auto scrollbar-hide">
                   {pages[currentPage] === 'home' && (
                     <div className="text-center text-white">
-                      <h1 className="text-4xl sm:text-5xl font-bold mb-6 font-playfair">
+                      <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 font-playfair">
                         Welcome to Koi Sushi & Gallery
                       </h1>
-                      <p className="text-xl mb-10 font-playfair italic">
+                      <p className="text-lg sm:text-xl mb-6 sm:mb-10 font-playfair italic">
                         Experience the art of sushi in a unique gallery setting
                       </p>
-                      <div className="flex flex-wrap justify-center gap-4">
+                      <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
                         {pages.map((page, index) => (
                           <Button
                             key={page}
                             onClick={() => setCurrentPage(index)}
                             variant="outline"
-                            className="mb-2 bg-white/10 text-white border-white/20 hover:bg-white/20 hover:text-white transition-all duration-300 shadow-lg text-lg px-6 py-3 font-playfair"
+                            className="mb-2 bg-white/10 text-white border-white/20 hover:bg-white/20 hover:text-white transition-all duration-300 shadow-lg text-sm sm:text-lg px-3 sm:px-6 py-2 sm:py-3 font-playfair"
                           >
                             {page.charAt(0).toUpperCase() + page.slice(1)}
                           </Button>
