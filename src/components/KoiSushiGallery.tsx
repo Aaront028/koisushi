@@ -140,7 +140,7 @@ type CartItem = {
   quantity: number;
 }
 
-const CartModal = ({ isOpen, onClose, cart, onCheckout, onRemove }: { isOpen: boolean; onClose: () => void; cart: CartItem[]; onCheckout: () => void; onRemove: (name: string) => void }) => {
+const CartModal = ({ isOpen, onClose, cart, onCheckout, onRemove, onClearAll }: { isOpen: boolean; onClose: () => void; cart: CartItem[]; onCheckout: () => void; onRemove: (name: string) => void; onClearAll: () => void }) => {
   if (!isOpen) return null;
 
   const total = cart.reduce((sum, item) => sum + parseFloat(item.price.replace('$', '')) * item.quantity, 0);
@@ -154,7 +154,7 @@ const CartModal = ({ isOpen, onClose, cart, onCheckout, onRemove }: { isOpen: bo
             <span>{item.name} x {item.quantity}</span>
             <div>
               <span className="mr-4">${(parseFloat(item.price.replace('$', '')) * item.quantity).toFixed(2)}</span>
-              <Button onClick={() => onRemove(item.name)} className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 text-sm">
+              <Button onClick={() => onRemove(item.name)} className="bg-teal-600 hover:bg-teal-700 text-white px-2 py-1 text-sm">
                 Remove
               </Button>
             </div>
@@ -166,13 +166,20 @@ const CartModal = ({ isOpen, onClose, cart, onCheckout, onRemove }: { isOpen: bo
             <span>${total.toFixed(2)}</span>
           </div>
         </div>
-        <div className="flex justify-end space-x-2 mt-6">
-          <Button onClick={onClose} className="bg-gray-500 hover:bg-gray-600 text-white">
-            Close
-          </Button>
-          <Button onClick={onCheckout} className="bg-red-700 hover:bg-red-800 text-white">
-            Proceed to Checkout
-          </Button>
+        <div className="flex justify-between items-center mt-6">
+          {cart.length > 1 && (
+            <Button onClick={onClearAll} className="bg-gray-500 hover:bg-gray-600 text-white">
+              Clear All
+            </Button>
+          )}
+          <div className="flex space-x-2">
+            <Button onClick={onClose} className="bg-gray-500 hover:bg-gray-600 text-white">
+              Close
+            </Button>
+            <Button onClick={onCheckout} className="bg-teal-600 hover:bg-teal-700 text-white">
+              Proceed to Checkout
+            </Button>
+          </div>
         </div>
       </div>
     </div>
@@ -225,7 +232,7 @@ const CheckoutModal = ({ isOpen, onClose, cart }: { isOpen: boolean; onClose: ()
             <Button onClick={() => {
               alert('Order placed successfully! Please check your email for confirmation. (This is a demo)');
               onClose();
-            }} className="bg-red-700 hover:bg-red-800 text-white">
+            }} className="bg-teal-600 hover:bg-teal-700 text-white">
               Place Order
             </Button>
           </div>
@@ -252,7 +259,7 @@ const HomeButton = ({ onClick }: { onClick: () => void }) => (
     whileTap={{ scale: 0.9 }}
     onClick={onClick}
   >
-    <div className="w-12 h-12 bg-red-700 rounded-full flex items-center justify-center cursor-pointer shadow-lg hover:bg-red-800 transition-colors duration-300">
+    <div className="w-12 h-12 bg-teal-600 rounded-full flex items-center justify-center cursor-pointer shadow-lg hover:bg-teal-700 transition-colors duration-300">
       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
       </svg>
@@ -295,6 +302,14 @@ export default function Component() {
         return prevCart.filter(item => item.name !== name);
       }
     });
+  };
+
+  const clearCart = () => {
+    setCart([]);
+  };
+
+  const clearPlatter = (platterName: string) => {
+    setCart(prevCart => prevCart.filter(item => item.name !== platterName));
   };
 
   const paginate = (newDirection: number) => {
@@ -406,7 +421,7 @@ export default function Component() {
                             key={section.title}
                             onClick={() => setActiveMenuSection(section.title)}
                             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-300 ${activeMenuSection === section.title
-                              ? "bg-red-700 text-white"
+                              ? "bg-teal-600 text-white"
                               : "bg-gray-800 text-gray-300 hover:bg-gray-700"
                               }`}
                           >
@@ -432,32 +447,53 @@ export default function Component() {
                     <div className="text-white">
                       <h2 className="text-4xl font-bold mb-8 text-center font-playfair">Catering Platters</h2>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {cateringPlatters.map((platter, index) => (
-                          <div key={index} className="bg-gray-900/80 rounded-lg overflow-hidden shadow-lg border border-gray-800 hover:border-gray-700 transition-all duration-300 flex flex-col">
-                            <div className="p-6 flex-grow">
-                              <h3 className="text-2xl font-semibold mb-4 font-playfair text-white">{platter.name}</h3>
-                              <div className="mb-4 space-y-2">
-                                {platter.items.map((item, itemIndex) => (
-                                  <div key={itemIndex} className="text-gray-300 text-sm">
-                                    {item}
+                        {cateringPlatters.map((platter, index) => {
+                          const cartItem = cart.find(item => item.name === platter.name);
+                          const quantity = cartItem ? cartItem.quantity : 0;
+                          return (
+                            <div key={index} className="bg-gray-900/80 rounded-lg overflow-hidden shadow-lg border border-gray-800 hover:border-gray-700 transition-all duration-300 flex flex-col">
+                              <div className="p-6 flex-grow flex flex-col">
+                                <div className="flex justify-between items-center mb-4">
+                                  <h3 className="text-2xl font-semibold font-playfair text-white">{platter.name}</h3>
+                                  {quantity > 0 && (
+                                    <span className="bg-gray-600 text-gray-200 text-sm font-bold px-2 py-1 rounded-full">
+                                      {quantity} in cart
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="mb-4 space-y-2 flex-grow">
+                                  {platter.items.map((item, itemIndex) => (
+                                    <div key={itemIndex} className="text-gray-300 text-sm">
+                                      {item}
+                                    </div>
+                                  ))}
+                                </div>
+                                <div className="flex justify-between items-center mt-auto">
+                                  <span className="text-3xl font-bold text-white">{platter.price}</span>
+                                  <div className="space-x-2">
+                                    {quantity > 0 && (
+                                      <Button
+                                        className="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded transition-colors duration-300"
+                                        onClick={() => clearPlatter(platter.name)}
+                                      >
+                                        Clear Platter
+                                      </Button>
+                                    )}
+                                    <Button
+                                      className="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-4 rounded transition-colors duration-300"
+                                      onClick={() => addToCart(platter)}
+                                    >
+                                      Add to Cart
+                                    </Button>
                                   </div>
-                                ))}
+                                </div>
                               </div>
-                              <div className="flex justify-between items-center mt-6">
-                                <span className="text-3xl font-bold text-white">{platter.price}</span>
-                                <Button
-                                  className="bg-red-700 hover:bg-red-800 text-white font-semibold py-2 px-4 rounded transition-colors duration-300"
-                                  onClick={() => addToCart(platter)}
-                                >
-                                  Add to Cart
-                                </Button>
+                              <div className="bg-gray-800/50 px-6 py-3">
+                                <p className="text-sm text-gray-400">Perfect for {index % 2 === 0 ? 'small gatherings' : 'large events'}</p>
                               </div>
                             </div>
-                            <div className="bg-gray-800/50 px-6 py-3 mt-auto">
-                              <p className="text-sm text-gray-400">Perfect for {index % 2 === 0 ? 'small gatherings' : 'large events'}</p>
-                            </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                       <div className="text-center mt-8">
                         <Button
@@ -543,6 +579,7 @@ export default function Component() {
           setIsCheckoutOpen(true);
         }}
         onRemove={removeFromCart}
+        onClearAll={clearCart}
       />
 
       <CheckoutModal
