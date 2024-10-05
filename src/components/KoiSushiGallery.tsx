@@ -376,7 +376,7 @@ export default function Component() {
                 />
               )}
               <div className={`bg-black bg-opacity-60 p-8 ${currentPage === 0 ? 'content-padding' : 'pt-8'} rounded-2xl shadow-2xl overflow-hidden backdrop-blur-sm`}>
-                <div className="relative z-10 content-height overflow-y-auto scrollbar-hide">
+                <div className="relative z-10 content-height overflow-y-auto scrollbar-hide pb-20"> {/* Added pb-20 here */}
                   {pages[currentPage] === 'home' && (
                     <div className="text-center text-white">
                       <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 font-playfair">
