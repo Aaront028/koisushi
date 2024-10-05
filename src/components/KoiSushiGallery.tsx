@@ -140,9 +140,55 @@ const cateringPlatters = [
   }
 ]
 
+const CheckoutModal = ({ isOpen, onClose, platterName, price }: { isOpen: boolean; onClose: () => void; platterName: string | null; price: string | null }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+      <div className="bg-white p-8 rounded-lg max-w-md w-full">
+        <h3 className="text-2xl font-bold mb-4 text-gray-800">Checkout</h3>
+        <p className="text-gray-600 mb-4">
+          You are ordering the {platterName} platter for {price}.
+        </p>
+        <form className="space-y-4">
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
+            <input type="text" id="name" name="name" className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" />
+          </div>
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+            <input type="email" id="email" name="email" className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" />
+          </div>
+          <div>
+            <label htmlFor="address" className="block text-sm font-medium text-gray-700">Delivery Address</label>
+            <textarea id="address" name="address" rows={3} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"></textarea>
+          </div>
+          <p className="text-sm text-gray-500 italic">
+            We will send an email confirmation of your order to the provided email address.
+          </p>
+          <div className="flex justify-end space-x-2">
+            <Button onClick={onClose} className="bg-gray-500 hover:bg-gray-600 text-white">
+              Cancel
+            </Button>
+            <Button onClick={() => {
+              alert('Order placed successfully! Please check your email for confirmation. (This is a demo)');
+              onClose();
+            }} className="bg-red-700 hover:bg-red-800 text-white">
+              Place Order
+            </Button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
 export default function Component() {
   const [currentPage, setCurrentPage] = useState(0)
   const [activeMenuSection, setActiveMenuSection] = useState(menuSections[0].title)
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const [selectedPlatter, setSelectedPlatter] = useState<string | null>(null);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
   const paginate = (newDirection: number) => {
     setCurrentPage((prevPage) => {
@@ -245,52 +291,68 @@ export default function Component() {
                   )}
 
                   {pages[currentPage] === 'menu' && (
-                    <div>
-                      <h2 className="text-3xl font-bold mb-6 text-center text-white">Our Menu</h2>
-                      <div className="flex flex-wrap justify-center gap-2 mb-6">
+                    <div className="text-white">
+                      <h2 className="text-4xl font-bold mb-8 text-center font-playfair">Our Menu</h2>
+                      <div className="flex flex-wrap justify-center gap-3 mb-8">
                         {menuSections.map((section) => (
                           <button
                             key={section.title}
                             onClick={() => setActiveMenuSection(section.title)}
-                            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${activeMenuSection === section.title
-                              ? "bg-blue-500 text-white"
-                              : "bg-gray-700 text-white hover:bg-gray-600"
+                            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-300 ${activeMenuSection === section.title
+                              ? "bg-red-700 text-white"
+                              : "bg-gray-800 text-gray-300 hover:bg-gray-700"
                               }`}
                           >
                             {section.title}
                           </button>
                         ))}
                       </div>
-                      <div className="space-y-4">
-                        {menuSections.find(section => section.title === activeMenuSection)?.items.map((item, index) => (
-                          <div key={index} className="flex justify-between items-center py-2 border-b border-gray-600">
-                            <span className="text-white font-medium">{item.name}</span>
-                            <span className="text-white">{item.price}</span>
-                          </div>
-                        ))}
+                      <div className="bg-gray-900/80 rounded-lg overflow-hidden shadow-lg border border-gray-800 p-6">
+                        <h3 className="text-2xl font-semibold mb-6 font-playfair text-white">{activeMenuSection}</h3>
+                        <div className="space-y-4">
+                          {menuSections.find(section => section.title === activeMenuSection)?.items.map((item, index) => (
+                            <div key={index} className="flex justify-between items-center py-3 border-b border-gray-700">
+                              <span className="text-gray-300 font-medium">{item.name}</span>
+                              <span className="text-white font-bold">{item.price}</span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   )}
 
                   {pages[currentPage] === 'catering' && (
                     <div className="text-white">
-                      <h2 className="text-3xl font-bold mb-6 text-center">Catering Platters</h2>
+                      <h2 className="text-4xl font-bold mb-8 text-center font-playfair">Catering Platters</h2>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {cateringPlatters.map((platter, index) => (
-                          <Card key={index} className="bg-white bg-opacity-10">
-                            <CardHeader>
-                              <CardTitle className="text-xl text-white">{platter.name}</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                              <ul className="list-disc list-inside mb-4 text-white">
+                          <div key={index} className="bg-gray-900/80 rounded-lg overflow-hidden shadow-lg border border-gray-800 hover:border-gray-700 transition-all duration-300 flex flex-col">
+                            <div className="p-6 flex-grow">
+                              <h3 className="text-2xl font-semibold mb-4 font-playfair text-white">{platter.name}</h3>
+                              <div className="mb-4 space-y-2">
                                 {platter.items.map((item, itemIndex) => (
-                                  <li key={itemIndex}>{item}</li>
+                                  <div key={itemIndex} className="text-gray-300 text-sm">
+                                    {item}
+                                  </div>
                                 ))}
-                              </ul>
-                              <p className="text-2xl font-bold mb-4 text-white">{platter.price}</p>
-                              <Button size="sm">Order Now</Button>
-                            </CardContent>
-                          </Card>
+                              </div>
+                              <div className="flex justify-between items-center mt-6">
+                                <span className="text-3xl font-bold text-white">{platter.price}</span>
+                                <Button
+                                  className="bg-red-700 hover:bg-red-800 text-white font-semibold py-2 px-4 rounded transition-colors duration-300"
+                                  onClick={() => {
+                                    setSelectedPlatter(platter.name);
+                                    setIsCheckoutOpen(true);
+                                  }}
+                                >
+                                  Order Now
+                                </Button>
+                              </div>
+                            </div>
+                            <div className="bg-gray-800/50 px-6 py-3 mt-auto">
+                              <p className="text-sm text-gray-400">Perfect for {index % 2 === 0 ? 'small gatherings' : 'large events'}</p>
+                            </div>
+                          </div>
                         ))}
                       </div>
                     </div>
@@ -356,6 +418,13 @@ export default function Component() {
           <p>Website created by v0</p>
         </div>
       </footer>
+
+      <CheckoutModal
+        isOpen={isCheckoutOpen}
+        onClose={() => setIsCheckoutOpen(false)}
+        platterName={selectedPlatter}
+        price={cateringPlatters.find(p => p.name === selectedPlatter)?.price || null}
+      />
     </div>
   )
 }
