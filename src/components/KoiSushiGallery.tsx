@@ -241,6 +241,31 @@ const CheckoutModal = ({ isOpen, onClose, cart }: { isOpen: boolean; onClose: ()
   );
 };
 
+const HomeButton = ({ onClick }: { onClick: () => void }) => (
+  <motion.div
+    className="fixed bottom-24 left-0 right-0 mx-auto w-12 z-30"
+    initial={{ opacity: 0.5, scale: 1 }}
+    animate={{
+      opacity: [0.5, 1, 0.5],
+      scale: [1, 1.1, 1],
+    }}
+    transition={{
+      duration: 2,
+      repeat: Infinity,
+      repeatType: "reverse",
+    }}
+    whileHover={{ scale: 1.2 }}
+    whileTap={{ scale: 0.9 }}
+    onClick={onClick}
+  >
+    <div className="w-12 h-12 bg-red-700 rounded-full flex items-center justify-center cursor-pointer shadow-lg hover:bg-red-800 transition-colors duration-300">
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+      </svg>
+    </div>
+  </motion.div>
+);
+
 export default function Component() {
   const [currentPage, setCurrentPage] = useState(0)
   const [activeMenuSection, setActiveMenuSection] = useState(menuSections[0].title)
@@ -322,7 +347,7 @@ export default function Component() {
         }}
       />
 
-      <main className="relative z-10 min-h-screen flex items-center justify-center p-4 sm:p-6">
+      <main className="relative z-10 min-h-screen flex items-center justify-center p-4 sm:p-6 pb-40">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentPage}
@@ -342,7 +367,7 @@ export default function Component() {
                 />
               )}
               <div className={`bg-black bg-opacity-60 p-8 ${currentPage === 0 ? 'pt-24' : 'pt-8'} rounded-2xl shadow-2xl overflow-hidden backdrop-blur-sm`}>
-                <div className="relative z-10 max-h-[calc(100vh-16rem)] overflow-y-auto scrollbar-hide">
+                <div className="relative z-10 max-h-[calc(100vh-20rem)] overflow-y-auto scrollbar-hide">
                   {pages[currentPage] === 'home' && (
                     <div className="text-center text-white">
                       <h1 className="text-4xl sm:text-5xl font-bold mb-6 font-playfair">
@@ -511,6 +536,10 @@ export default function Component() {
           <p>Website created by v0</p>
         </div>
       </footer>
+
+      {currentPage !== 0 && (
+        <HomeButton onClick={() => setCurrentPage(0)} />
+      )}
 
       <CartModal
         isOpen={isCartOpen}
