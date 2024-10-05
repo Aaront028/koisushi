@@ -476,15 +476,15 @@ export default function Component() {
                       <div className="space-y-4">
                         <div className="flex items-center">
                           <Phone className="mr-2 h-5 w-5" />
-                          <span>03 386 2880</span>
+                          <span>0800 TEST SUSHI  (For demo purposes only)</span>
                         </div>
                         <div className="flex items-center">
                           <Mail className="mr-2 h-5 w-5" />
-                          <span>info@koisushigallery.co.nz</span>
+                          <span>test@testdomain.co.nz (For demo purposes only)</span>
                         </div>
                         <div className="flex items-center">
                           <MapPin className="mr-2 h-5 w-5" />
-                          <span>123 Sushi Street, Christchurch, New Zealand</span>
+                          <span>123 Sushi Street, Christchurch, New Zealand (For demo purposes only)</span>
                         </div>
                         <div className="flex items-center">
                           <Facebook className="mr-2 h-5 w-5" />
